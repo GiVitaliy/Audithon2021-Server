@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: A18Main
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/audithon
+    username: postgres
+    password: zxcv
+    hikari:
+      maximum-pool-size: 20
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+  http:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+      max-request-size: 500MB
+
+server:
+  port: 8080
+  contextPath: /api
+  ssl:
+    enabled: false
+    key-store: keystore/ssl/server.p12
+    key-store-password: 8229ad3ae88aff4fafa6ef2c7083e447
+
+management:
+  port: 8081
+#  contextPath: /actuator
+  security:
+    enabled: false
+
+endpoints:
+  shutdown:
+    enabled: true
+
+flyway:
+  encoding: UTF-8
+  out-of-order: true
+  ignore-missing-migrations: true
+
+job-runner:
+  node-id: 1
+  core-pool-size: 10
+  max-pool-size: 100
+  db-writer-interval-ms: 5000
+
+file-storage:
+  path: c:/data/audithon/file-storage/
+
+
+application-settings:
+# телеметрия включена, ведется накопление статистики
+  telemetry-enabled: true
+# цвет заголовка приложения (передается на клиент)
+  header-color: 0x800000
+# наименование в заголовке приложения (передается на клиент)
+  header-app-title: ТЕСТОВОЕ ПРИЛОЖЕНИЕ
+
+
+job-background-scheduler:
+# размер пула задач, которые могут быть запущены одновременно фоновым планировщиком задач по расписанию
+  pool-size: 3
+# включен ли планировщик задач
+  enabled: false
+# интервал запуска планировщика, в миллисекундах
+  polling-ms: 60000

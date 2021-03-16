@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'org.springframework.boot' version '1.5.9.RELEASE'
+    id 'org.flywaydb.flyway' version '5.0.7'
+}
+
+group = 'ru.audithon'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+ext {
+	guavaVersion = '23.6-jre'
+    jacksonDatatypeVersion = '2.9.4'
+    postgresJdbcVersion = '42.2.1'
+}
+
+repositories {
+	mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+dependencies {
+
+    compile('org.apache.commons:commons-lang3:3.12.0')
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-jdbc') {
+        exclude group: 'org.apache.tomcat', module: 'tomcat-jdbc'
+    }
+	compile('org.springframework.boot:spring-boot-starter-validation')
+	compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-aop')
+
+    compile('org.apache.httpcomponents:httpclient:4.5.6')
+	compile('com.zaxxer:HikariCP:2.7.8')
+
+	compile("com.google.guava:guava:${guavaVersion}")
+	compile("uk.com.robust-it:cloning:1.9.9")
+
+    // flyway migration on run using current application configuration
+	compile("org.flywaydb:flyway-core:5.0.7")
+
+    compile ('org.jamel.dbf:dbf-reader:0.3.0')
+    compile ('com.github.albfernandez:javadbf:1.10.1')
+
+    compile ('org.httprpc:httprpc:5.8')
+
+    runtime("org.postgresql:postgresql:${postgresJdbcVersion}")
+
+    compile('org.projectlombok:lombok')
+    compileOnly ('org.springframework.boot:spring-boot-configuration-processor')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.boot:spring-boot-test-autoconfigure')
+    testCompile('org.springframework.security:spring-security-test')
+}
+
+compileJava.dependsOn(processResources)
+
+/* Название jar-файла для CI */
+task printJarName {
+    println "${project.name}-${project.version}.jar"
+}
+
+/* Установка профиля для Spring Boot */
+test {
+    doFirst {
+        if(project.findProperty("branch")) {
+            def branchValue = "$branch"
+            println("setSpringProfile BRANCH_NAME - ${branchValue}")
+
+            def replacement = {
+                if (it == '/') {
+                    '_'
+                } else {
+                    null
+                }
+            }
+            def safeValue = branchValue.collectReplacements(replacement)
+            println("setSpringProfile set active - ${safeValue}")
+            environment("SPRING_PROFILES_ACTIVE", safeValue)
+        }
+    }
+}
