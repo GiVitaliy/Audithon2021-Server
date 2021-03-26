@@ -17,4 +17,6 @@ public class IndicatorType {
     private @NotNull @Length(max = 50) String code;
     private @NotNull @Length(max = 256) String caption;
     private String description;
+    private Boolean favorite;
+    private Boolean negative;
 }

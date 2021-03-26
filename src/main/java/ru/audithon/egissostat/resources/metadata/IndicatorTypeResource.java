@@ -9,17 +9,22 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.audithon.egissostat.domain.common.IndicatorType;
 import ru.audithon.egissostat.logic.common.IndicatorTypeDao;
+import ru.audithon.egissostat.resources.ApiResultDto;
 import ru.audithon.egissostat.resources.ResourceNotFoundException;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static ru.audithon.common.helpers.ObjectUtils.isNull;
 
 @RestController
 @Validated
-@RequestMapping(value = "/metadata/incoming-type",
-        produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/metadata/indicator-type",
+    produces = MediaType.APPLICATION_JSON_VALUE)
 public class IndicatorTypeResource {
     private IndicatorTypeDao dao;
 
@@ -31,6 +36,11 @@ public class IndicatorTypeResource {
     @GetMapping
     public List<IndicatorType> all() {
         return dao.all();
+    }
+
+    @GetMapping("/favorites")
+    public List<IndicatorType> favorites() {
+        return dao.all().stream().filter(x -> isNull(x.getFavorite(), false)).collect(Collectors.toList());
     }
 
     @GetMapping("/{id:-?[\\d]+}")
@@ -51,30 +61,31 @@ public class IndicatorTypeResource {
         }
 
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newValue.getId()).toUri();
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(newValue.getId()).toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(new ApiResultDto(new ArrayList<>(), null));
     }
 
-    @PutMapping("/{id:-?[\\d]+}")
+    @PostMapping("/update/{id:-?[\\d]+}")
     public ResponseEntity update(@PathVariable("id") int id, @Valid @RequestBody IndicatorType value) {
         int cnt = dao.update(value, id);
         if (cnt == 0) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new ApiResultDto(new ArrayList<>(), null));
     }
 
-    @DeleteMapping("/{id:-?[\\d]+}")
+    @PostMapping("/delete/{id:-?[\\d]+}")
     public ResponseEntity delete(@PathVariable("id") int id) {
+
         int cnt = dao.delete(id);
         if (cnt == 0) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new ApiResultDto(new ArrayList<>(), null));
     }
 }
