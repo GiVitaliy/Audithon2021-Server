@@ -32,6 +32,8 @@ public class IndicatorTypeDaoImpl extends PgCrudDaoBase<IndicatorType, Integer> 
                     IndicatorType::getFavorite, IndicatorType::setFavorite))
                 .withColumn(ColumnMapper.of(Boolean.class, "negative",
                     IndicatorType::getNegative, IndicatorType::setNegative))
+                .withColumn(ColumnMapper.of(String.class, "group_caption",
+                    IndicatorType::getGroup, IndicatorType::setGroup))
                 .build(),
             jdbcTemplate);
     }

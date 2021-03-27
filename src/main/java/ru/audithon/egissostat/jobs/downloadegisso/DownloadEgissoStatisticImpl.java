@@ -227,7 +227,7 @@ public class DownloadEgissoStatisticImpl extends JobRunner {
                 indicatorCaption = indicatorCaption.substring(0, 253) + "...";
             }
 
-            indicatorType = indicatorTypeDao.insert(new IndicatorType(null, indicatorCode, indicatorCaption, null, false, false));
+            indicatorType = indicatorTypeDao.insert(new IndicatorType(null, indicatorCode, indicatorCaption, null, false, false, "-"));
         }
         return indicatorType;
     }
