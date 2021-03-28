@@ -20,4 +20,5 @@ public class IndicatorType {
     private Boolean favorite;
     private Boolean negative;
     private String group;
+    private Integer precision;
 }

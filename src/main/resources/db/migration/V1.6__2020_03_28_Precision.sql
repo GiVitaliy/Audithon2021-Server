@@ -1,0 +1,3 @@
+ALTER TABLE indicator_type
+  ADD IF NOT EXISTS precision INT NOT NULL DEFAULT 2;
+
